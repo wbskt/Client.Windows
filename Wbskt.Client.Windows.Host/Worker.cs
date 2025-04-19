@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Net.WebSockets;
 using Wbskt.Common.Contracts;
+using Wbskt.Common.Extensions;
 
 namespace Wbskt.Client.Windows.Host;
 
