@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Net.WebSockets;
 using Wbskt.Common.Contracts;
@@ -5,7 +6,7 @@ using Wbskt.Common.Extensions;
 
 namespace Wbskt.Client.Windows.Host;
 
-public class Worker(ILogger<Worker> logger) : BackgroundService
+public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguration) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -13,7 +14,7 @@ public class Worker(ILogger<Worker> logger) : BackgroundService
         {
             if (logger.IsEnabled(LogLevel.Information))
             {
-                logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                logger.LogInformation("Client running at: {time}", DateTimeOffset.Now);
             }
 
             try
@@ -22,7 +23,8 @@ public class Worker(ILogger<Worker> logger) : BackgroundService
             }
             catch (Exception ex)
             {
-                logger.LogError("unexpected error: {error}", ex.ToString());
+                logger.LogError("unexpected error: {error}", ex.Message);
+                logger.LogTrace("unexpected error: {error}", ex.ToString());
             }
 
             await Task.Delay(5 * 1000, stoppingToken);
@@ -32,13 +34,18 @@ public class Worker(ILogger<Worker> logger) : BackgroundService
         private async Task Listen(CancellationToken ct)
         {
             var token = await GetToken();
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            var socketServerAddress = jwt.Claims.GetSocketServerAddress();
+            var tokenId = jwt.Claims.GetTokenId();
+            logger.LogInformation("token with id: {tokenId} received", tokenId);
+
             ClientWebSocket? ws = null;
             try
             {
                 ws = new ClientWebSocket();
                 ws.Options.SetRequestHeader("Authorization", $"Bearer {token}");
 
-                var wsUri = new Uri("wss://localhost:7293/ws");
+                var wsUri = new Uri($"wss://{socketServerAddress}/ws");
 
                 logger.LogInformation("trying to connect: {wsUri}", wsUri);
                 await ws.ConnectAsync(wsUri, ct);
@@ -79,16 +86,16 @@ public class Worker(ILogger<Worker> logger) : BackgroundService
         {
             var httpClient = new HttpClient()
             {
-                BaseAddress = new Uri("https://localhost:7020"),
+                BaseAddress = new Uri($"https://{wbsktConfiguration.CoreServerAddress}"),
             };
             try
             {
                 var clientConnReq = new ClientConnectionRequest()
                 {
-                    ChannelSecret = "thisasdf is the very veyr bug secret",
-                    ClientName = "boo",
-                    ClientUniqueId = Guid.NewGuid(),
-                    ChannelSubscriberId = Guid.Parse("8c2cdf59-3b9d-43ce-9c89-b842c63080df")
+                    ChannelSecret = wbsktConfiguration.ChannelDetails.Secret,
+                    ClientName = wbsktConfiguration.ClientDetails.Name,
+                    ClientUniqueId = wbsktConfiguration.ClientDetails.UniqueId,
+                    ChannelSubscriberId = wbsktConfiguration.ChannelDetails.SubscriberId
                 };
                 var result = await httpClient.PostAsync("/api/channels/client", JsonContent.Create(clientConnReq));
 
@@ -98,7 +105,7 @@ public class Worker(ILogger<Worker> logger) : BackgroundService
             {
                 logger.LogError("cannot reach server:{baseAddress}, error: {error}", httpClient.BaseAddress, ex.Message);
                 logger.LogTrace("cannot reach server:{baseAddress}, error: {error}", httpClient.BaseAddress, ex.ToString());
-                return string.Empty;
+                throw;
             }
         }
 
