@@ -1,6 +1,10 @@
 ﻿<Project Sdk="WixToolset.Sdk/6.0.0">
+  <PropertyGroup>
+    <SuppressValidation>true</SuppressValidation>
+    <SuppressIces>ICE30</SuppressIces>
+  </PropertyGroup>
   <ItemGroup>
-    <HarvestDirectory Include="../Wbskt.Client.Windows.Host/bin/$(Configuration)/net8.0/win-x64">
+    <HarvestDirectory Include="../Wbskt.Client.Windows.Host/bin/$(Configuration)/net8.0/win-x64/publish">
       <ComponentGroupName>HarvestedComponents</ComponentGroupName>
       <DirectoryRefId>WbsktClient</DirectoryRefId>
       <SuppressRootDirectory>true</SuppressRootDirectory>
@@ -8,10 +12,8 @@
       <SuppressIIsHarvesting>true</SuppressIIsHarvesting>
       <SuppressRegistryHarvesting>true</SuppressRegistryHarvesting>
     </HarvestDirectory>
-
-    <BindPath Include="../Wbskt.Client.Windows.Host/bin/$(Configuration)/net8.0/win-x64" />
+    <BindPath Include="../Wbskt.Client.Windows.Host/bin/$(Configuration)/net8.0/win-x64/publish" />
   </ItemGroup>
-  
   <ItemGroup>
     <PackageReference Include="WixToolset.Heat" Version="6.0.0" />
   </ItemGroup>

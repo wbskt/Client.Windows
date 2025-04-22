@@ -4,8 +4,35 @@
 
     <MediaTemplate EmbedCab="yes" />
 
+    <ComponentGroup Id="ManualServiceComponent">
+      <Component Id="WbsktClientServiceComponent" Guid="daa39aa8-0199-434b-b27a-123456789123" Directory="WbsktClient">
+        <File Id="WbsktClientExe"
+              Source="Wbskt.Client.Windows.Host.exe"
+              KeyPath="yes" />
+
+        <ServiceInstall
+            Id="WbsktClientService"
+            Name="WbsktClientService"
+            DisplayName="Wbskt Client Windows Service"
+            Description="Runs the Wbskt messaging client in background"
+            Start="auto"
+            Type="ownProcess"
+            ErrorControl="normal"
+            Vital="yes" />
+
+        <ServiceControl
+            Id="StartService"
+            Name="WbsktClientService"
+            Start="install"
+            Stop="both"
+            Remove="uninstall"
+            Wait="yes" />
+      </Component>
+    </ComponentGroup>
+
     <Feature Id="Main">
       <ComponentGroupRef Id="HarvestedComponents" />
+      <ComponentGroupRef Id="ManualServiceComponent" />
     </Feature>
   </Package>
 </Wix>
