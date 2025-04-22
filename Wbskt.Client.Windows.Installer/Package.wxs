@@ -1,0 +1,11 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="Wbskt Windows Client" Manufacturer="Wbskt" Version="1.0.0.0" UpgradeCode="daa39aa8-0199-434b-b27a-8ab842a1d312">
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="Main">
+      <ComponentGroupRef Id="HarvestedComponents" />
+    </Feature>
+  </Package>
+</Wix>

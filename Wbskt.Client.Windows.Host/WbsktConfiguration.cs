@@ -5,12 +5,12 @@ namespace Wbskt.Client.Windows.Host;
 public class ChannelDetails
 {
     public Guid SubscriberId { get; set; }
-    public string Secret { get; set; }
+    public required string Secret { get; set; }
 }
 
 public class ClientDetails
 {
-    public string Name { get; set; }
+    public required string Name { get; set; }
     public Guid UniqueId { get; set; }
     public int RetryIntervalInSeconds { get; set; } = 10;
 }

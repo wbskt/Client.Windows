@@ -1,0 +1,18 @@
+﻿<Project Sdk="WixToolset.Sdk/6.0.0">
+  <ItemGroup>
+    <HarvestDirectory Include="../Wbskt.Client.Windows.Host/bin/$(Configuration)/net8.0/win-x64">
+      <ComponentGroupName>HarvestedComponents</ComponentGroupName>
+      <DirectoryRefId>WbsktClient</DirectoryRefId>
+      <SuppressRootDirectory>true</SuppressRootDirectory>
+      <HarvestFileMetadata>false</HarvestFileMetadata>
+      <SuppressIIsHarvesting>true</SuppressIIsHarvesting>
+      <SuppressRegistryHarvesting>true</SuppressRegistryHarvesting>
+    </HarvestDirectory>
+
+    <BindPath Include="../Wbskt.Client.Windows.Host/bin/$(Configuration)/net8.0/win-x64" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Heat" Version="6.0.0" />
+  </ItemGroup>
+</Project>

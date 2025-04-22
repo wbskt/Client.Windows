@@ -1,10 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-Wbskt.Client.Windows.Host-B732096D-2C74-4B28-95D2-5ED65B98E093</UserSecretsId>
+    <DefaultItemExcludes>$(DefaultItemExcludes);publish**</DefaultItemExcludes>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>
