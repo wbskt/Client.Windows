@@ -13,7 +13,7 @@
         <ServiceInstall
             Id="WbsktClientService"
             Name="WbsktClientService"
-            DisplayName="Wbskt Client Windows Service"
+            DisplayName="Wbskt Windows Client Service"
             Description="Runs the Wbskt messaging client in background"
             Start="auto"
             Type="ownProcess"
