@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Net.WebSockets;
+using System.Text.Json;
 using Wbskt.Common.Contracts;
 using Wbskt.Common.Extensions;
 
@@ -56,7 +57,6 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
                 var (receiveResult, message) = await ws.ReadAsync(ct);
                 while (!receiveResult.CloseStatus.HasValue)
                 {
-                    logger.LogInformation("received message: {message}", message);
                     HandleMessage(message);
 
                     if (receiveResult.MessageType == WebSocketMessageType.Close)
@@ -111,5 +111,21 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
 
         private void HandleMessage(string message)
         {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                logger.LogWarning("received message is empty");
+                return;
+            }
+
+            try
+            {
+                var payload = JsonSerializer.Deserialize<ClientPayload>(message) ?? throw new JsonException("Serialized payload is null");
+                payload.ProcessPayload();
+            }
+            catch (JsonException jex)
+            {
+                logger.LogError("error while deserializing payload: {message}, error: {error}", message, jex.Message);
+                logger.LogError("error while deserializing payload: {message}, error: {error}", message, jex.ToString());
+            }
         }
 }
