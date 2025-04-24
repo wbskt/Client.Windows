@@ -33,53 +33,46 @@
 
     <!-- Features -->
     <Feature Id="Main">
-      <ComponentGroupRef Id="HarvestedComponents" />
-      <ComponentGroupRef Id="ManualServiceComponent" />
+      <ComponentGroupRef Id="HarvestedComponentGroup" />
+      <ComponentGroupRef Id="ManualServiceComponentGroup" />
+      <ComponentGroupRef Id="DotNetRuntimeComponentGroup" />
     </Feature>
 
   </Package>
 
   <!-- Components and Directories -->
   <Fragment>
-  
-    <Component Id="WbsktClientServiceComponent" Guid="daa39aa8-0199-434b-b27a-123456789123" Directory="WbsktClient">
-      <File Id="WbsktClientExe"
-            Source="Wbskt.Client.Windows.Host.exe"
-            KeyPath="yes" />
 
-      <ServiceInstall
-          Id="WbsktClientService"
-          Name="WbsktClientService"
-          DisplayName="Wbskt Windows Client Service"
-          Description="Runs the Wbskt messaging client in background"
-          Start="auto"
-          Type="ownProcess"
-          ErrorControl="normal"
-          Vital="yes" />
+    <ComponentGroup Id="ManualServiceComponentGroup">
+      <Component Id="WbsktClientServiceComponent" Guid="4aa39aa8-0199-434b-b27a-123456789123" Directory="WbsktClient">
+        <File Id="WbsktClientExe" Source="Wbskt.Client.Windows.Host.exe" KeyPath="yes" />
 
-      <ServiceControl
-          Id="StartService"
-          Name="WbsktClientService"
-          Start="install"
-          Stop="both"
-          Remove="uninstall"
-          Wait="yes" />
-    </Component>
-    
-    <DirectoryRef Id="WbsktClient">
-      <Directory Id="Dependencies" Name="Dependencies">
-        <Component Id="DotNetRuntimeInstallerComponent" Guid="*">
-          <File Id="DotNetRuntimeInstaller"
-                Source="Dependencies\dotnet-runtime-8.0.15-win-x64.exe"
-                KeyPath="yes" />
-        </Component>
-      </Directory>
-    </DirectoryRef>
+        <ServiceInstall
+            Id="WbsktClientService"
+            Name="WbsktClientService"
+            DisplayName="Wbskt Windows Client Service"
+            Description="Runs the Wbskt messaging client in background"
+            Start="auto"
+            Type="ownProcess"
+            ErrorControl="normal"
+            Vital="yes" />
 
-    <ComponentGroup Id="ManualServiceComponent">
-      <ComponentRef Id="WbsktClientServiceComponent" />
-      <ComponentRef Id="DotNetRuntimeInstallerComponent" />
+        <ServiceControl
+            Id="StartService"
+            Name="WbsktClientService"
+            Start="install"
+            Stop="both"
+            Remove="uninstall"
+            Wait="yes" />
+        
+      </Component>
     </ComponentGroup>
-  </Fragment>
 
+    <ComponentGroup Id="DotNetRuntimeComponentGroup" >
+      <Component Id="DotNetRuntimeComp" Guid="aaa39aa8-0199-434b-b27a-123456789124" Directory="DependenciesDir">
+        <File Id="DotNetRuntimeInstaller" Source="Dependencies\dotnet-runtime-8.0.15-win-x64.exe" KeyPath ="yes"/>
+      </Component>
+    </ComponentGroup>
+    
+  </Fragment>
 </Wix>
