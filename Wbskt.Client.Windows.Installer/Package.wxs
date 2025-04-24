@@ -8,33 +8,32 @@
     <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
-    <!-- Check .NET Runtime version -->
-    <Property Id="DOTNET_RUNTIME_VERSION">
+     <!--Check .NET Runtime version--> 
+    <!--<Property Id="DOTNET_RUNTIME_VERSION">
       <RegistrySearch Id="DotNetRuntimeVersionCheck"
                       Root="HKLM"
                       Key="SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedhost"
                       Name="Version"
                       Type="raw" />
-    </Property>
+    </Property>-->
 
-    <!-- Custom Action to install .NET if needed -->
+     <!--Custom Action to install .NET if needed--> 
     <CustomAction Id="InstallDotNetRuntime"
                   FileRef="DotNetRuntimeInstaller"
-                  ExeCommand="/install /quiet /norestart"
+                  ExeCommand=" /install /quiet /norestart /log dotnet-install.log"
                   Execute="deferred"
                   Return="check" />
 
-    <!-- Trigger Custom Action when .NET is not in the expected version range -->
+     <!--Trigger Custom Action when .NET is not in the expected version range--> 
     <InstallExecuteSequence>
       <Custom Action="InstallDotNetRuntime"
-              After="InstallInitialize"
-              Condition="NOT (DOTNET_RUNTIME_VERSION >= &quot;8.0.5&quot; AND DOTNET_RUNTIME_VERSION &lt; &quot;8.1&quot;)" />
+              After="InstallFiles" />
     </InstallExecuteSequence>
 
     <!-- Features -->
     <Feature Id="Main">
       <ComponentGroupRef Id="HarvestedComponentGroup" />
-      <ComponentGroupRef Id="ManualServiceComponentGroup" />
+      <!--<ComponentGroupRef Id="ManualServiceComponentGroup" />-->
       <ComponentGroupRef Id="DotNetRuntimeComponentGroup" />
     </Feature>
 
@@ -43,7 +42,7 @@
   <!-- Components and Directories -->
   <Fragment>
 
-    <ComponentGroup Id="ManualServiceComponentGroup">
+    <!--<ComponentGroup Id="ManualServiceComponentGroup">
       <Component Id="WbsktClientServiceComponent" Guid="4aa39aa8-0199-434b-b27a-123456789123" Directory="WbsktClient">
         <File Id="WbsktClientExe" Source="Wbskt.Client.Windows.Host.exe" KeyPath="yes" />
 
@@ -66,7 +65,7 @@
             Wait="yes" />
         
       </Component>
-    </ComponentGroup>
+    </ComponentGroup>-->
 
     <ComponentGroup Id="DotNetRuntimeComponentGroup" >
       <Component Id="DotNetRuntimeComp" Guid="aaa39aa8-0199-434b-b27a-123456789124" Directory="DependenciesDir">

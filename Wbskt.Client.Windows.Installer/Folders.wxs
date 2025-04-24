@@ -2,7 +2,7 @@
   <Fragment>
     <StandardDirectory Id="ProgramFiles6432Folder">
       <Directory Id="INSTALLFOLDER" Name="!(bind.Property.Manufacturer)" >
-        <Directory Id="WbsktClient" Name="WbsktClient">
+        <Directory Id="WbsktClientDir" Name="WbsktClient">
           <Directory Id="DependenciesDir" Name="Dependencies" />
         </Directory>
       </Directory>
