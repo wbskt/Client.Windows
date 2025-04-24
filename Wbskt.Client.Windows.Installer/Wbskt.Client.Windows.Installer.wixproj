@@ -7,7 +7,6 @@
     <HarvestDirectory Include="../Wbskt.Client.Windows.Host/bin/$(Configuration)/net8.0/win-x64/publish">
       <ComponentGroupName>HarvestedComponents</ComponentGroupName>
       <DirectoryRefId>WbsktClient</DirectoryRefId>
-      <SuppressRootDirectory>true</SuppressRootDirectory>
       <HarvestFileMetadata>false</HarvestFileMetadata>
       <SuppressIIsHarvesting>true</SuppressIIsHarvesting>
       <SuppressRegistryHarvesting>true</SuppressRegistryHarvesting>
@@ -16,5 +15,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="WixToolset.Heat" Version="6.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Dependencies\dotnet-runtime-8.0.15-win-x64.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

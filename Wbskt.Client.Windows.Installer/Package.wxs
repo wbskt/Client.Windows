@@ -1,38 +1,85 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <Package Name="Wbskt Windows Client" Manufacturer="Wbskt" Version="1.0.0.0" UpgradeCode="daa39aa8-0199-434b-b27a-8ab842a1d312">
-    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
 
+  <Package Name="Wbskt Windows Client"
+           Manufacturer="Wbskt"
+           Version="1.0.0.0"
+           UpgradeCode="daa39aa8-0199-434b-b27a-8ab842a1d312">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
-    <ComponentGroup Id="ManualServiceComponent">
-      <Component Id="WbsktClientServiceComponent" Guid="daa39aa8-0199-434b-b27a-123456789123" Directory="WbsktClient">
-        <File Id="WbsktClientExe"
-              Source="Wbskt.Client.Windows.Host.exe"
-              KeyPath="yes" />
+    <!-- Check .NET Runtime version -->
+    <Property Id="DOTNET_RUNTIME_VERSION">
+      <RegistrySearch Id="DotNetRuntimeVersionCheck"
+                      Root="HKLM"
+                      Key="SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedhost"
+                      Name="Version"
+                      Type="raw" />
+    </Property>
 
-        <ServiceInstall
-            Id="WbsktClientService"
-            Name="WbsktClientService"
-            DisplayName="Wbskt Windows Client Service"
-            Description="Runs the Wbskt messaging client in background"
-            Start="auto"
-            Type="ownProcess"
-            ErrorControl="normal"
-            Vital="yes" />
+    <!-- Custom Action to install .NET if needed -->
+    <CustomAction Id="InstallDotNetRuntime"
+                  FileRef="DotNetRuntimeInstaller"
+                  ExeCommand="/install /quiet /norestart"
+                  Execute="deferred"
+                  Return="check" />
 
-        <ServiceControl
-            Id="StartService"
-            Name="WbsktClientService"
-            Start="install"
-            Stop="both"
-            Remove="uninstall"
-            Wait="yes" />
-      </Component>
-    </ComponentGroup>
+    <!-- Trigger Custom Action when .NET is not in the expected version range -->
+    <InstallExecuteSequence>
+      <Custom Action="InstallDotNetRuntime"
+              After="InstallInitialize"
+              Condition="NOT (DOTNET_RUNTIME_VERSION >= &quot;8.0.5&quot; AND DOTNET_RUNTIME_VERSION &lt; &quot;8.1&quot;)" />
+    </InstallExecuteSequence>
 
+    <!-- Features -->
     <Feature Id="Main">
       <ComponentGroupRef Id="HarvestedComponents" />
       <ComponentGroupRef Id="ManualServiceComponent" />
     </Feature>
+
   </Package>
+
+  <!-- Components and Directories -->
+  <Fragment>
+  
+    <Component Id="WbsktClientServiceComponent" Guid="daa39aa8-0199-434b-b27a-123456789123" Directory="WbsktClient">
+      <File Id="WbsktClientExe"
+            Source="Wbskt.Client.Windows.Host.exe"
+            KeyPath="yes" />
+
+      <ServiceInstall
+          Id="WbsktClientService"
+          Name="WbsktClientService"
+          DisplayName="Wbskt Windows Client Service"
+          Description="Runs the Wbskt messaging client in background"
+          Start="auto"
+          Type="ownProcess"
+          ErrorControl="normal"
+          Vital="yes" />
+
+      <ServiceControl
+          Id="StartService"
+          Name="WbsktClientService"
+          Start="install"
+          Stop="both"
+          Remove="uninstall"
+          Wait="yes" />
+    </Component>
+    
+    <DirectoryRef Id="WbsktClient">
+      <Directory Id="Dependencies" Name="Dependencies">
+        <Component Id="DotNetRuntimeInstallerComponent" Guid="*">
+          <File Id="DotNetRuntimeInstaller"
+                Source="Dependencies\dotnet-runtime-8.0.15-win-x64.exe"
+                KeyPath="yes" />
+        </Component>
+      </Directory>
+    </DirectoryRef>
+
+    <ComponentGroup Id="ManualServiceComponent">
+      <ComponentRef Id="WbsktClientServiceComponent" />
+      <ComponentRef Id="DotNetRuntimeInstallerComponent" />
+    </ComponentGroup>
+  </Fragment>
+
 </Wix>
