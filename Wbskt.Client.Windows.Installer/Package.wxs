@@ -8,7 +8,7 @@
     <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
-     <!--Check .NET Runtime version--> 
+     <!--Check .NET Runtime version-->
     <!--<Property Id="DOTNET_RUNTIME_VERSION">
       <RegistrySearch Id="DotNetRuntimeVersionCheck"
                       Root="HKLM"
@@ -17,24 +17,24 @@
                       Type="raw" />
     </Property>-->
 
-     <!--Custom Action to install .NET if needed--> 
-    <CustomAction Id="InstallDotNetRuntime"
-                  FileRef="DotNetRuntimeInstaller"
-                  ExeCommand=" /install /quiet /norestart /log dotnet-install.log"
-                  Execute="deferred"
-                  Return="check" />
+     <!--Custom Action to install .NET if needed-->
+<!--    <CustomAction Id="InstallDotNetRuntime"-->
+<!--                  FileRef="DotNetRuntimeInstaller"-->
+<!--                  ExeCommand=" /install /quiet /norestart /log dotnet-install.log"-->
+<!--                  Execute="deferred"-->
+<!--                  Return="check" />-->
 
-     <!--Trigger Custom Action when .NET is not in the expected version range--> 
-    <InstallExecuteSequence>
-      <Custom Action="InstallDotNetRuntime"
-              After="InstallFiles" />
-    </InstallExecuteSequence>
+     <!--Trigger Custom Action when .NET is not in the expected version range-->
+<!--    <InstallExecuteSequence>-->
+<!--      <Custom Action="InstallDotNetRuntime"-->
+<!--              After="InstallFiles" />-->
+<!--    </InstallExecuteSequence>-->
 
     <!-- Features -->
     <Feature Id="Main">
       <ComponentGroupRef Id="HarvestedComponentGroup" />
       <!--<ComponentGroupRef Id="ManualServiceComponentGroup" />-->
-      <ComponentGroupRef Id="DotNetRuntimeComponentGroup" />
+<!--      <ComponentGroupRef Id="DotNetRuntimeComponentGroup" />-->
     </Feature>
 
   </Package>
@@ -63,15 +63,15 @@
             Stop="both"
             Remove="uninstall"
             Wait="yes" />
-        
+
       </Component>
     </ComponentGroup>-->
 
-    <ComponentGroup Id="DotNetRuntimeComponentGroup" >
-      <Component Id="DotNetRuntimeComp" Guid="aaa39aa8-0199-434b-b27a-123456789124" Directory="DependenciesDir">
-        <File Id="DotNetRuntimeInstaller" Source="Dependencies\dotnet-runtime-8.0.15-win-x64.exe" KeyPath ="yes"/>
-      </Component>
-    </ComponentGroup>
-    
+<!--    <ComponentGroup Id="DotNetRuntimeComponentGroup" >-->
+<!--      <Component Id="DotNetRuntimeComp" Guid="aaa39aa8-0199-434b-b27a-123456789124" Directory="DependenciesDir">-->
+<!--        <File Id="DotNetRuntimeInstaller" Source="Dependencies\dotnet-runtime-8.0.15-win-x64.exe" KeyPath ="yes"/>-->
+<!--      </Component>-->
+<!--    </ComponentGroup>-->
+
   </Fragment>
 </Wix>
