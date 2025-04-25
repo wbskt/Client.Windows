@@ -33,7 +33,7 @@
     <!-- Features -->
     <Feature Id="Main">
       <ComponentGroupRef Id="HarvestedComponentGroup" />
-      <!--<ComponentGroupRef Id="ManualServiceComponentGroup" />-->
+      <ComponentGroupRef Id="ManualServiceComponentGroup" />
 <!--      <ComponentGroupRef Id="DotNetRuntimeComponentGroup" />-->
     </Feature>
 
@@ -42,8 +42,8 @@
   <!-- Components and Directories -->
   <Fragment>
 
-    <!--<ComponentGroup Id="ManualServiceComponentGroup">
-      <Component Id="WbsktClientServiceComponent" Guid="4aa39aa8-0199-434b-b27a-123456789123" Directory="WbsktClient">
+    <ComponentGroup Id="ManualServiceComponentGroup">
+      <Component Id="WbsktClientServiceComponent" Guid="4aa39aa8-0199-434b-b27a-123456789123" Directory="WbsktClientDir">
         <File Id="WbsktClientExe" Source="Wbskt.Client.Windows.Host.exe" KeyPath="yes" />
 
         <ServiceInstall
@@ -65,7 +65,7 @@
             Wait="yes" />
 
       </Component>
-    </ComponentGroup>-->
+    </ComponentGroup>
 
 <!--    <ComponentGroup Id="DotNetRuntimeComponentGroup" >-->
 <!--      <Component Id="DotNetRuntimeComp" Guid="aaa39aa8-0199-434b-b27a-123456789124" Directory="DependenciesDir">-->

@@ -1,4 +1,8 @@
 ﻿<Project Sdk="WixToolset.Sdk/6.0.0">
+  <PropertyGroup>
+    <SuppressValidation>true</SuppressValidation>
+    <SuppressIces>ICE30</SuppressIces>
+  </PropertyGroup>
   <ItemGroup>
     <HarvestDirectory Include="../Wbskt.Client.Windows.Host/bin/$(Configuration)/net8.0/win-x64/publish">
       <ComponentGroupName>HarvestedComponentGroup</ComponentGroupName>
