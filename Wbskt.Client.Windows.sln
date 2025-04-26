@@ -12,6 +12,8 @@ Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "Wbskt.Client.Windows.Instal
 		{F0082705-9522-403D-BD7A-4A3A2CAA5F6E} = {F0082705-9522-403D-BD7A-4A3A2CAA5F6E}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{6C4CD09B-8164-48DE-88F8-27E9AFD4FE03}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
