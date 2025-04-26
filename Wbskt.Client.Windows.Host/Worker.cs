@@ -1,7 +1,7 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Net.WebSockets;
 using System.Text.Json;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Wbskt.Common.Contracts;
 using Wbskt.Common.Extensions;
 
@@ -42,7 +42,12 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
         private async Task Listen(CancellationToken ct)
         {
             var token = await GetToken();
-            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return;
+            }
+
+            var jwt = new JsonWebTokenHandler().ReadJsonWebToken(token);
             var socketServerAddress = jwt.Claims.GetSocketServerAddress();
             var tokenId = jwt.Claims.GetTokenId();
             logger.LogInformation("token with id: {tokenId} received", tokenId);
@@ -52,6 +57,7 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
             {
                 ws = new ClientWebSocket();
                 ws.Options.SetRequestHeader("Authorization", $"Bearer {token}");
+                ws.Options.RemoteCertificateValidationCallback = (_, _, _, _) => true;
 
                 var wsUri = new Uri($"wss://{socketServerAddress}/ws");
 
@@ -106,7 +112,13 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
                 };
                 var result = await httpClient.PostAsync("/api/channels/client", JsonContent.Create(clientConnReq));
 
-                return await result.Content.ReadAsStringAsync();
+                if (result.IsSuccessStatusCode)
+                {
+                    return await result.Content.ReadAsStringAsync();
+                }
+
+                logger.LogError("response from token request is: {message}, statusCode: {code}", result.ReasonPhrase, result.StatusCode);
+                return string.Empty;
             }
             catch(Exception ex)
             {

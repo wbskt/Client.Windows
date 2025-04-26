@@ -24,9 +24,9 @@ public static class Program
         builder.Services.AddWindowsService();
         builder.Services.AddHostedService<Worker>();
 
-        var clientDetails = builder.Configuration.GetSection("ClientDetails").Get<ClientDetails>();
+        var clientDetails = builder.Configuration.GetSection(nameof(ClientDetails)).Get<ClientDetails>();
         builder.Services.AddSingleton(clientDetails!);
-        var channelDetails = builder.Configuration.GetSection("ChannelDetails").Get<ChannelDetails>();
+        var channelDetails = builder.Configuration.GetSection(nameof(ChannelDetails)).Get<ChannelDetails>();
         builder.Services.AddSingleton(channelDetails!);
 
         builder.Services.AddSingleton<WbsktConfiguration>();
