@@ -4,15 +4,15 @@ namespace Wbskt.Client.Windows.Host;
 
 public class ChannelDetails
 {
-    public Guid SubscriberId { get; set; }
-    public required string Secret { get; set; }
+    public Guid SubscriberId { get; init; }
+    public required string Secret { get; init; } = string.Empty;
 }
 
 public class ClientDetails
 {
-    public required string Name { get; set; }
-    public Guid UniqueId { get; set; }
-    public int RetryIntervalInSeconds { get; set; } = 10;
+    public required string Name { get; init; } = $"{Environment.MachineName}:{Guid.NewGuid()}";
+    public Guid UniqueId { get; init; }
+    public int RetryIntervalInSeconds { get; init; } = 10;
 }
 
 public class WbsktConfiguration(ClientDetails clientDetails, ChannelDetails channelDetails, IConfiguration configuration)

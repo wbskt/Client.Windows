@@ -3,7 +3,7 @@
   "profiles": {
     "Wbskt.Client.Windows.Host": {
       "commandName": "Project",
-      "commandLineArgs": "--CoreServerAddress=localhost:7020 --ChannelDetails:SubscriberId=8c2cdf59-3b9d-43ce-9c89-b842c63080df --ChannelDetails:Secret=\"this is the very big secret\" --ClientDetails:Name=naruto --ClientDetails:UniqueId=78295d24-17f9-45b2-b34f-e8792f7d0a93",
+      "commandLineArgs": "--CoreServerAddress=localhost --ChannelDetails:SubscriberId=8c2cdf59-3b9d-43ce-9c89-b842c63080df --ChannelDetails:Secret=\"this is the very big secret\" --ClientDetails:Name=naruto --ClientDetails:UniqueId=78295d24-17f9-45b2-b34f-e8792f7d0a93",
       "dotnetRunMessages": true,
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"

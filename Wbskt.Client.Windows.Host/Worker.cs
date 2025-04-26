@@ -13,6 +13,13 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
     {
         while (!stoppingToken.IsCancellationRequested)
         {
+            if (!IsConfigValid(wbsktConfiguration))
+            {
+                logger.LogError("restart the service after configuring properly");
+                await Task.Delay(wbsktConfiguration.ClientDetails.RetryIntervalInSeconds * 1000, stoppingToken);
+                continue;
+            }
+
             if (logger.IsEnabled(LogLevel.Information))
             {
                 logger.LogInformation("Client running at: {time}", DateTimeOffset.Now);
@@ -28,7 +35,7 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
                 logger.LogTrace("unexpected error: {error}", ex.ToString());
             }
 
-            await Task.Delay(5 * 1000, stoppingToken);
+            await Task.Delay(wbsktConfiguration.ClientDetails.RetryIntervalInSeconds * 1000, stoppingToken);
         }
     }
 
@@ -127,5 +134,34 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
                 logger.LogError("error while deserializing payload: {message}, error: {error}", message, jex.Message);
                 logger.LogError("error while deserializing payload: {message}, error: {error}", message, jex.ToString());
             }
+        }
+
+        private bool IsConfigValid(WbsktConfiguration? configuration)
+        {
+            if (configuration == null)
+            {
+                logger.LogError("configuration is not set");
+                return false;
+            }
+
+            if (configuration.ChannelDetails.SubscriberId == default)
+            {
+                logger.LogError("subscriberId is not set");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(configuration.ChannelDetails.Secret))
+            {
+                logger.LogError("secret is not set");
+                return false;
+            }
+
+            if (configuration.ClientDetails.UniqueId == default)
+            {
+                logger.LogError("uniqueId is not set");
+                return false;
+            }
+
+            return true;
         }
 }
