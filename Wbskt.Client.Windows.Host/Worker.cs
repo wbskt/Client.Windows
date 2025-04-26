@@ -39,141 +39,162 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
         }
     }
 
-        private async Task Listen(CancellationToken ct)
+    private async Task Listen(CancellationToken ct)
+    {
+        var token = await GetToken();
+        if (string.IsNullOrWhiteSpace(token))
         {
-            var token = await GetToken();
-            if (string.IsNullOrWhiteSpace(token))
+            return;
+        }
+
+        var jwt = new JsonWebTokenHandler().ReadJsonWebToken(token);
+        var socketServerAddress = jwt.Claims.GetSocketServerAddress();
+        var tokenId = jwt.Claims.GetTokenId();
+        logger.LogInformation("token with id: {tokenId} received", tokenId);
+
+        ClientWebSocket? ws = null;
+        try
+        {
+            ws = new ClientWebSocket();
+            ws.Options.SetRequestHeader("Authorization", $"Bearer {token}");
+            ws.Options.RemoteCertificateValidationCallback = (_, _, _, _) => true;
+
+            var wsUri = new Uri($"wss://{socketServerAddress}/ws");
+
+            logger.LogInformation("trying to connect: {wsUri}", wsUri);
+            await ws.ConnectAsync(wsUri, ct);
+            logger.LogInformation("connection established to: {wsUri}", wsUri);
+
+            await ws.WriteAsync("ping", ct);
+
+            while (!ct.IsCancellationRequested && ws.State == WebSocketState.Open)
             {
-                return;
-            }
-
-            var jwt = new JsonWebTokenHandler().ReadJsonWebToken(token);
-            var socketServerAddress = jwt.Claims.GetSocketServerAddress();
-            var tokenId = jwt.Claims.GetTokenId();
-            logger.LogInformation("token with id: {tokenId} received", tokenId);
-
-            ClientWebSocket? ws = null;
-            try
-            {
-                ws = new ClientWebSocket();
-                ws.Options.SetRequestHeader("Authorization", $"Bearer {token}");
-                ws.Options.RemoteCertificateValidationCallback = (_, _, _, _) => true;
-
-                var wsUri = new Uri($"wss://{socketServerAddress}/ws");
-
-                logger.LogInformation("trying to connect: {wsUri}", wsUri);
-                await ws.ConnectAsync(wsUri, ct);
-                logger.LogInformation("connection established to: {wsUri}", wsUri);
-
-                await ws.WriteAsync("ping", ct);
-
                 var (receiveResult, message) = await ws.ReadAsync(ct);
-                while (!receiveResult.CloseStatus.HasValue)
-                {
-                    HandleMessage(message);
 
-                    if (receiveResult.MessageType == WebSocketMessageType.Close)
-                    {
-                        logger.LogInformation("closing connection ({closeStatus})", receiveResult.CloseStatusDescription);
-                        await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "closing connection (socket server ack)", ct);
-                        break;
-                    }
-                    (receiveResult, message) = await ws.ReadAsync(ct); // what happens if this crashes?.
+                if (receiveResult.MessageType == WebSocketMessageType.Close)
+                {
+                    logger.LogInformation("closing connection ({closeStatus})", receiveResult.CloseStatusDescription);
+                    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "closing connection (socket server ack)", ct);
+                    break;
                 }
 
-                await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "closing connection (socket server initiated close message)", ct);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("unexpected error occured during socket communication, error: {error}", ex.Message);
-                logger.LogTrace("unexpected error occured during socket communication, error: {error}", ex.ToString());
-            }
-            finally
-            {
-                ws?.Dispose();
-                logger.LogInformation("disposed connection");
+                HandleMessage(message);
             }
         }
-
-        private async Task<string> GetToken()
+        catch (OperationCanceledException)
         {
-            var httpClient = new HttpClient()
+            // Expected when cancellation token is cancelled.
+            logger.LogInformation("cancellation requested, closing socket connection.");
+        }
+        catch (WebSocketException ex) when (ct.IsCancellationRequested)
+        {
+            // Sometimes WebSocket throws when cancelled mid-await
+            logger.LogInformation("webSocket cancelled, closing gracefully. {error}", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("unexpected error occured during socket communication, error: {error}", ex.Message);
+            logger.LogTrace("unexpected error occured during socket communication, error: {error}", ex.ToString());
+        }
+        finally
+        {
+            if (ws?.State is WebSocketState.Open or WebSocketState.CloseReceived)
             {
-                BaseAddress = new Uri($"https://{wbsktConfiguration.CoreServerAddress}"),
+                try
+                {
+                    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Cancellation requested", CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning("error while closing websocket: {error}", ex.Message);
+                }
+            }
+
+            ws?.Dispose();
+            logger.LogInformation("disposed connection");
+        }
+    }
+
+
+    private async Task<string> GetToken()
+    {
+        var httpClient = new HttpClient()
+        {
+            BaseAddress = new Uri($"https://{wbsktConfiguration.CoreServerAddress}"),
+        };
+        try
+        {
+            var clientConnReq = new ClientConnectionRequest()
+            {
+                ChannelSecret = wbsktConfiguration.ChannelDetails.Secret,
+                ClientName = wbsktConfiguration.ClientDetails.Name,
+                ClientUniqueId = wbsktConfiguration.ClientDetails.UniqueId,
+                ChannelSubscriberId = wbsktConfiguration.ChannelDetails.SubscriberId
             };
-            try
-            {
-                var clientConnReq = new ClientConnectionRequest()
-                {
-                    ChannelSecret = wbsktConfiguration.ChannelDetails.Secret,
-                    ClientName = wbsktConfiguration.ClientDetails.Name,
-                    ClientUniqueId = wbsktConfiguration.ClientDetails.UniqueId,
-                    ChannelSubscriberId = wbsktConfiguration.ChannelDetails.SubscriberId
-                };
-                var result = await httpClient.PostAsync("/api/channels/client", JsonContent.Create(clientConnReq));
+            var result = await httpClient.PostAsync("/api/channels/client", JsonContent.Create(clientConnReq));
 
-                if (result.IsSuccessStatusCode)
-                {
-                    return await result.Content.ReadAsStringAsync();
-                }
-
-                logger.LogError("response from token request is: {message}, statusCode: {code}", result.ReasonPhrase, result.StatusCode);
-                return string.Empty;
-            }
-            catch(Exception ex)
+            if (result.IsSuccessStatusCode)
             {
-                logger.LogError("cannot reach server:{baseAddress}, error: {error}", httpClient.BaseAddress, ex.Message);
-                logger.LogTrace("cannot reach server:{baseAddress}, error: {error}", httpClient.BaseAddress, ex.ToString());
-                throw;
+                return await result.Content.ReadAsStringAsync();
             }
+
+            logger.LogError("response from token request is: {message}, statusCode: {code}", result.ReasonPhrase, result.StatusCode);
+            return string.Empty;
         }
-
-        private void HandleMessage(string message)
+        catch(Exception ex)
         {
-            if (string.IsNullOrWhiteSpace(message))
-            {
-                logger.LogWarning("received message is empty");
-                return;
-            }
-
-            try
-            {
-                var payload = JsonSerializer.Deserialize<ClientPayload>(message) ?? throw new JsonException("Serialized payload is null");
-                payload.ProcessPayload();
-            }
-            catch (JsonException jex)
-            {
-                logger.LogError("error while deserializing payload: {message}, error: {error}", message, jex.Message);
-                logger.LogError("error while deserializing payload: {message}, error: {error}", message, jex.ToString());
-            }
+            logger.LogError("cannot reach server:{baseAddress}, error: {error}", httpClient.BaseAddress, ex.Message);
+            logger.LogTrace("cannot reach server:{baseAddress}, error: {error}", httpClient.BaseAddress, ex.ToString());
+            throw;
         }
+    }
 
-        private bool IsConfigValid(WbsktConfiguration? configuration)
+    private void HandleMessage(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
         {
-            if (configuration == null)
-            {
-                logger.LogError("configuration is not set");
-                return false;
-            }
-
-            if (configuration.ChannelDetails.SubscriberId == default)
-            {
-                logger.LogError("subscriberId is not set");
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(configuration.ChannelDetails.Secret))
-            {
-                logger.LogError("secret is not set");
-                return false;
-            }
-
-            if (configuration.ClientDetails.UniqueId == default)
-            {
-                logger.LogError("uniqueId is not set");
-                return false;
-            }
-
-            return true;
+            logger.LogWarning("received message is empty");
+            return;
         }
+
+        try
+        {
+            var payload = JsonSerializer.Deserialize<ClientPayload>(message) ?? throw new JsonException("Serialized payload is null");
+            payload.ProcessPayload();
+        }
+        catch (JsonException jex)
+        {
+            logger.LogError("error while deserializing payload: {message}, error: {error}", message, jex.Message);
+            logger.LogError("error while deserializing payload: {message}, error: {error}", message, jex.ToString());
+        }
+    }
+
+    private bool IsConfigValid(WbsktConfiguration? configuration)
+    {
+        if (configuration == null)
+        {
+            logger.LogError("configuration is not set");
+            return false;
+        }
+
+        if (configuration.ChannelDetails.SubscriberId == default)
+        {
+            logger.LogError("subscriberId is not set");
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(configuration.ChannelDetails.Secret))
+        {
+            logger.LogError("secret is not set");
+            return false;
+        }
+
+        if (configuration.ClientDetails.UniqueId == default)
+        {
+            logger.LogError("uniqueId is not set");
+            return false;
+        }
+
+        return true;
+    }
 }
