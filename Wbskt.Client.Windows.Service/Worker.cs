@@ -160,6 +160,7 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
         try
         {
             var payload = JsonSerializer.Deserialize<ClientPayload>(message) ?? throw new JsonException("Serialized payload is null");
+            logger.LogInformation("payload received: {payload}", payload.Data);
             payload.ProcessPayload();
         }
         catch (JsonException jex)
