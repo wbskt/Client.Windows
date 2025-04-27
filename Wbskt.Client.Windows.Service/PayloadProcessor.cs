@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Wbskt.Common.Contracts;
 
-namespace Wbskt.Client.Windows.Host;
+namespace Wbskt.Client.Windows.Service;
 
 internal static class PayloadProcessor
 {

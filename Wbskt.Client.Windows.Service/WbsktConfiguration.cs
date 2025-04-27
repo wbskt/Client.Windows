@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Wbskt.Client.Windows.Host;
+namespace Wbskt.Client.Windows.Service;
 
 public class ChannelDetails
 {

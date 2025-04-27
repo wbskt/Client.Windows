@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Wbskt.Common.Contracts;
 using Wbskt.Common.Extensions;
 
-namespace Wbskt.Client.Windows.Host;
+namespace Wbskt.Client.Windows.Service;
 
 public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguration) : BackgroundService
 {

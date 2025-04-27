@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-Wbskt.Client.Windows.Host-B732096D-2C74-4B28-95D2-5ED65B98E093</UserSecretsId>
+    <UserSecretsId>dotnet-Wbskt.Client.Windows.Service-B732096D-2C74-4B28-95D2-5ED65B98E093</UserSecretsId>
     <DefaultItemExcludes>$(DefaultItemExcludes);publish**</DefaultItemExcludes>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
@@ -21,6 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Server\Wbskt.Common\Wbskt.Common.csproj" />
+    <ProjectReference Include="..\..\..\Core\Wbskt.Common\Wbskt.Common.csproj" />
   </ItemGroup>
 </Project>

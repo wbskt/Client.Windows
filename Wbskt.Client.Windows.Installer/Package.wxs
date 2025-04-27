@@ -44,7 +44,7 @@
 
     <ComponentGroup Id="ManualServiceComponentGroup">
       <Component Id="WbsktClientServiceComponent" Guid="4aa39aa8-0199-434b-b27a-123456789123" Directory="WbsktClientDir">
-        <File Id="WbsktClientExe" Source="Wbskt.Client.Windows.Host.exe" KeyPath="yes" />
+        <File Id="WbsktClientExe" Source="Wbskt.Client.Windows.Service.exe" KeyPath="yes" />
 
         <ServiceInstall
             Id="WbsktClientService"

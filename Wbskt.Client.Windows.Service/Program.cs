@@ -1,6 +1,6 @@
 using Serilog;
 
-namespace Wbskt.Client.Windows.Host;
+namespace Wbskt.Client.Windows.Service;
 
 public static class Program
 {
