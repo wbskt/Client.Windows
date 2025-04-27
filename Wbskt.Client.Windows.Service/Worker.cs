@@ -59,7 +59,7 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
             ws.Options.SetRequestHeader("Authorization", $"Bearer {token}");
             ws.Options.RemoteCertificateValidationCallback = (_, _, _, _) => true;
 
-            var wsUri = new Uri($"wss://{socketServerAddress}/ws");
+            var wsUri = new Uri($"ws://{socketServerAddress}/ws");
 
             logger.LogInformation("trying to connect: {wsUri}", wsUri);
             await ws.ConnectAsync(wsUri, ct);
@@ -120,7 +120,7 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
     {
         var httpClient = new HttpClient()
         {
-            BaseAddress = new Uri($"https://{wbsktConfiguration.CoreServerAddress}"),
+            BaseAddress = new Uri($"http://{wbsktConfiguration.CoreServerAddress}"),
         };
         try
         {

@@ -16,11 +16,9 @@ public static class Program
         }
 
         // Temporary bootstrap logger — to log before host is built
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .CreateBootstrapLogger();
+        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
 
-        var builder = Microsoft.Extensions.Hosting.Host.CreateApplicationBuilder(args);
+        var builder = Host.CreateApplicationBuilder(args);
         builder.Services.AddWindowsService();
         builder.Services.AddHostedService<Worker>();
 
