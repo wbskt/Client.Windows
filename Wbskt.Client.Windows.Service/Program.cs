@@ -24,11 +24,7 @@ public static class Program
         builder.Services.AddWindowsService();
         builder.Services.AddHostedService<Worker>();
 
-        var clientDetails = builder.Configuration.GetSection(nameof(ClientDetails)).Get<ClientDetails>();
-        builder.Services.AddSingleton(clientDetails!);
-        var channelDetails = builder.Configuration.GetSection(nameof(ChannelDetails)).Get<ChannelDetails>();
-        builder.Services.AddSingleton(channelDetails!);
-
+        builder.Services.Configure<WbsktConfiguration.Settings>(builder.Configuration);
         builder.Services.AddSingleton<WbsktConfiguration>();
 
         // Re-configure full logger (from config this time)
