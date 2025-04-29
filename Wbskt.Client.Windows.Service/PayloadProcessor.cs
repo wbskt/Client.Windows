@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Wbskt.Common.Contracts;
 
 namespace Wbskt.Client.Windows.Service;
@@ -7,13 +6,6 @@ internal static class PayloadProcessor
 {
     public static void ProcessPayload(this ClientPayload payload)
     {
-        // var process = Process.Start(new ProcessStartInfo
-        // {
-        //     FileName = "start",
-        //     Arguments = $"msedge https://jira.soti.net/browse/{payload.Data}",
-        //     CreateNoWindow = false,
-        //     UseShellExecute = false
-        // });
-        // process?.WaitForExit();
+
     }
 }
