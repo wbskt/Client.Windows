@@ -93,8 +93,7 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
         }
         catch (Exception ex)
         {
-            logger.LogError("unexpected error occured during socket communication, error: {error}", ex.Message);
-            logger.LogTrace("unexpected error occured during socket communication, error: {error}", ex.ToString());
+            logger.LogError(ex, "unexpected error occured during socket communication, error: {error}", ex.Message);
         }
         finally
         {
@@ -143,8 +142,7 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
         }
         catch(Exception ex)
         {
-            logger.LogError("cannot reach server:{baseAddress}, error: {error}", httpClient.BaseAddress, ex.Message);
-            logger.LogTrace("cannot reach server:{baseAddress}, error: {error}", httpClient.BaseAddress, ex.ToString());
+            logger.LogError(ex, "cannot reach server:{baseAddress}, error: {error}", httpClient.BaseAddress, ex.Message);
             throw;
         }
     }
@@ -165,8 +163,7 @@ public class Worker(ILogger<Worker> logger, WbsktConfiguration wbsktConfiguratio
         }
         catch (JsonException jex)
         {
-            logger.LogError("error while deserializing payload: {message}, error: {error}", message, jex.Message);
-            logger.LogError("error while deserializing payload: {message}, error: {error}", message, jex.ToString());
+            logger.LogError(jex, "error while deserializing payload: {message}, error: {error}", message, jex.Message);
         }
     }
 
