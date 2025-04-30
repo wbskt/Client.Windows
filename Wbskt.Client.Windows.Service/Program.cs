@@ -22,8 +22,7 @@ public static class Program
         builder.Services.AddWindowsService();
         builder.Services.AddHostedService<Worker>();
 
-        builder.Services.Configure<WbsktConfiguration.Settings>(builder.Configuration);
-        builder.Services.AddSingleton<WbsktConfiguration>();
+        builder.Services.ConfigureWbskt(builder.Configuration);
 
         // Re-configure full logger (from config this time)
         Log.Logger = new LoggerConfiguration()
