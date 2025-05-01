@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		nuget.config = nuget.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wbskt.Client", "..\Wbskt.Client.CSharp\Wbskt.Client\Wbskt.Client.csproj", "{B2F750CC-23C2-41FC-8DB8-012A299F7944}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wbskt.Client", "..\Client.CSharp\Wbskt.Client\Wbskt.Client.csproj", "{B2F750CC-23C2-41FC-8DB8-012A299F7944}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

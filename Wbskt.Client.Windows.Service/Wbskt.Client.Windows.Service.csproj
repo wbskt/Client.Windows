@@ -21,6 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Wbskt.Client.CSharp\Wbskt.Client\Wbskt.Client.csproj" />
+    <ProjectReference Include="..\..\Client.CSharp\Wbskt.Client\Wbskt.Client.csproj" />
   </ItemGroup>
 </Project>
