@@ -4,7 +4,7 @@ public class Worker(ILogger<Worker> logger, WbsktListener wbsktListener) : Backg
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        wbsktListener.ReceivedPayload += payload => logger.LogInformation("triggered: {data}", payload.Data);
-        await wbsktListener.StartListening(stoppingToken);
+        wbsktListener.ReceivedPayloadEvent += payload => logger.LogInformation("triggered: {data}", payload.Data);
+        await wbsktListener.StartListeningAsync(stoppingToken);
     }
 }
