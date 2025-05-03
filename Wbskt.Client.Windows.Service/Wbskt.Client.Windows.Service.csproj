@@ -23,4 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Client.CSharp\Wbskt.Client\Wbskt.Client.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="execute.bat" CopyToOutputDirectory="PreserveNewest"/>
+  </ItemGroup>
 </Project>

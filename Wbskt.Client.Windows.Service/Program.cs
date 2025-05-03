@@ -39,6 +39,7 @@ public static class Program
     {
         builder.Services.AddWindowsService();
         builder.Services.AddHostedService<Worker>();
+        builder.Services.AddSingleton<IPayloadHandler, PayloadHandler>();
         builder.Services.ConfigureWbsktListener(builder.Configuration);
     }
 
