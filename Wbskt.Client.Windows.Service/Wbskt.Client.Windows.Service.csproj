@@ -25,5 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="execute.bat" CopyToOutputDirectory="PreserveNewest"/>
+    <None Include="..\LICENSE.txt" Link="LICENSE.txt" CopyToOutputDirectory="PreserveNewest"/>
+    <None Include="..\README.md" Link="README.md" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
 </Project>
