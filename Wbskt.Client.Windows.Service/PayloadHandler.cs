@@ -5,7 +5,7 @@ namespace Wbskt.Client.Windows.Service;
 
 internal sealed class PayloadHandler(ILogger<PayloadHandler> logger) : IPayloadHandler
 {
-    public void ProcessPayload(ClientPayload payload)
+    public void ProcessPayload(UserClientPayload payload)
     {
         ExecCmdCommand(payload.Data);
     }

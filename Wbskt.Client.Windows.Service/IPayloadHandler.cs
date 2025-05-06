@@ -4,5 +4,5 @@ namespace Wbskt.Client.Windows.Service;
 
 public interface IPayloadHandler
 {
-    void ProcessPayload(ClientPayload payload);
+    void ProcessPayload(UserClientPayload payload);
 }
