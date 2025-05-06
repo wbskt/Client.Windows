@@ -8,6 +8,8 @@
     <UserSecretsId>dotnet-Wbskt.Client.Windows.Service-B732096D-2C74-4B28-95D2-5ED65B98E093</UserSecretsId>
     <DefaultItemExcludes>$(DefaultItemExcludes);publish**</DefaultItemExcludes>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>Wbskt.Client.Windows.Service.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
