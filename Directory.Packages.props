@@ -18,7 +18,7 @@
     <PackageVersion Include="Serilog.Settings.Configuration" Version="9.0.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
-    <PackageVersion Include="Wbskt.Client" Version="0.0.3" />
+    <PackageVersion Include="Wbskt.Client" Version="0.0.6" />
     <PackageVersion Include="WixToolset.Heat" Version="6.0.0" />
   </ItemGroup>
 </Project>
