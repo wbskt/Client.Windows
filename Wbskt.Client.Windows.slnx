@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="../Wbskt/Clients/Wbskt.Client.Sdk/Wbskt.Client.Sdk.csproj" />
+  <Project Path="Wbskt.Client.Windows.Models/Wbskt.Client.Windows.Models.csproj" />
+  <Project Path="Wbskt.Client.Windows.Service/Wbskt.Client.Windows.Service.csproj" />
+  <Project Path="Wbskt.Client.Windows.UI/Wbskt.Client.Windows.UI.csproj" />
+</Solution>
